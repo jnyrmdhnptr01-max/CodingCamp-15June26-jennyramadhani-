@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>To-Do Dashboard</title>
+
+<style>
+
+body{
+font-family:'Times New Roman', Times, serif;
+padding:20px;
+}
+
+button{
+padding:5px;
+margin:5px;
+cursor:pointer;
+}
+
+a{
+display:block;
+margin:5px;
+}
+
+.dark{
+background:black;
+color:rgb(255, 255, 255);
+}
+
+</style>
+
+</head>
+
+<body>
+    
+<h1 id="greet"></h1>
+
+<p id="time"></p>
+
+<button id="theme">
+🌙 Theme
+</button>
+
+<hr>
+
+<h2>Focus Timer</h2>
+
+<h1 id="timer">25:00</h1>
+
+<button onclick="start()">Start</button>
+<button onclick="stop()">Stop</button>
+<button onclick="reset()">Reset</button>
+
+<hr>
+
+<h2>To Do List</h2>
+
+<input id="task" placeholder="Add task">
+
+<button onclick="addTask()">
+Add
+</button>
+
+<ul id="list"></ul>
+
+<hr>
+
+<h2>Quick Links</h2>
+
+<input id="name" placeholder="Website Name">
+
+<input id="url" placeholder="Website URL">
+
+<button onclick="addLink()">
+Add
+</button>
+
+<div id="links"></div>
+
+
+<script>
+
+let tasks=
+JSON.parse(
+localStorage.getItem("tasks")
+)||[];
+
+let dataLinks=
+JSON.parse(
+localStorage.getItem("links")
+)||[];
+function showTime(){
+let d=new Date();
+document.getElementById(
+"time"
+).innerHTML=
+d.toLocaleString();
+
+let h=d.getHours();
+document.getElementById(
+"greet"
+).innerHTML=
+h<12 ?
+"Good Morning":
+h<18 ?
+"Good Afternoon":
+"Good Evening";
+
+}
+
+ShowTime();
+setInterval(
+showTime,
+1000
+);
+function addTask(){
+
+let t=
+document.getElementById(
+"task"
+).value;
+
+if(
+tasks.includes(t)
+){
+
+alert(
+"Task already exists"
+);
+
+return;
+
+}
+
+tasks.push(t);
+
+localStorage.setItem(
+"tasks",
+JSON.stringify(tasks)
+);
+
+showTask();
+
+document.getElementById(
+"task"
+).value="";
+
+}
+
+function showTask(){
+
+let list=
+document.getElementById(
+"list"
+);
+
+list.innerHTML="";
+
+tasks.forEach(
+(x,i)=>{
+
+list.innerHTML+=
+
+`<li>
+
+${x}
+
+<button onclick="del(${i})">
+
+X
+
+</button>
+
+</li>`;
+
+});
+
+}
+
+function del(i){
+
+tasks.splice(i,1);
+
+localStorage.setItem(
+"tasks",
+JSON.stringify(tasks)
+);
+
+showTask();
+
+}
+
+showTask();
+
+
+let t=1500;
+
+let run;
+
+function start(){
+
+clearInterval(run);
+
+run=
+setInterval(()=>{
+
+if(t>0){
+
+t--;
+
+show();
+
+}
+
+},1000);
+
+}
+
+function stop(){
+
+clearInterval(run);
+
+}
+
+function reset(){
+
+clearInterval(run);
+
+t=1500;
+
+show();
+
+}
+
+function show(){
+
+let m=
+Math.floor(t/60);
+
+let s=
+t%60;
+
+document.getElementById(
+"timer"
+).innerHTML=
+
+`${m}:${s
+.toString()
+.padStart(2,"0")}`;
+
+}
+
+show();
+
+function addLink(){
+
+let n=
+document.getElementById(
+"name"
+).value;
+
+let u=
+document.getElementById(
+"url"
+).value;
+
+dataLinks.push({
+n,u
+});
+
+localStorage.setItem(
+"links",
+JSON.stringify(
+dataLinks
+)
+);
+
+showLink();
+
+}
+
+function showLink(){
+
+let area=
+document.getElementById(
+"links"
+);
+
+area.innerHTML="";
+
+dataLinks.forEach(
+x=>{
+
+area.innerHTML+=
+
+`<a href="${x.u}" target="_blank">
+
+${x.n}
+
+</a>`;
+
+});
+
+}
+showLink();
+document
+.getElementById(
+"theme"
+)
+.onclick=()=>{
+
+document.body
+.classList.toggle(
+"Dark"
+);
+
+};
+</script>
+
+</body>
+</html>
